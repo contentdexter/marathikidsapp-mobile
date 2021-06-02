@@ -17,12 +17,14 @@ const styles = StyleSheet.create ({
         justifyContent: 'center',
         flex:1,
         alignItems: 'center',
-        height: 150,
-        margin: 10,
-        paddingTop: 10
+        height: 250,
+        margin: 5,
+        paddingTop: 10,
+        borderRadius: 20
     },
     image: {
         width: 80,
-        height: 80
+        height: 150,
+        marginBottom: 20
     }
  })
