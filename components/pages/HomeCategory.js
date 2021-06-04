@@ -3,24 +3,53 @@ import { useEffect, useState } from 'react';
 import { View, StyleSheet, FlatList  } from 'react-native';
 import * as Config from './../common/config';
 import CategoryCard from './../subcomponents/CategoryCard';
+import { ActivityIndicator } from 'react-native-paper';
+import * as Api from './../common/api';
 
-const HomeCategory = () => {
+const HomeCategory = ({ navigation }) => {
     const [homeCategories, setHomeCategories] = useState([]);
+    const [loader, setLoader] = useState(false);
     
     useEffect(() => {
-        let homeCategories = fetch(`${Config.API_PATH}home-category/app/1`);
-        homeCategories.then(result => result.json()).then(result => setHomeCategories(result));
-    }, [])
+        setLoader(true);
+        let homeCategories = Api.fetchAllCategory();
+        homeCategories.then(result => result.json()).then(result => {
+            setHomeCategories(result);
+            setLoader(false);
+        });
+    }, []);
+
+    const handleCategoryClick = (categoryId, categoryType, categoryName) => {
+        let nextRoute = 'Alphabets';
+        switch (categoryType) {
+            case '1': nextRoute = 'Alphabets';
+        }
+
+        navigation.navigate(nextRoute, {
+            categoryId,
+            headerTitle: categoryName
+        });
+    }
 
     return (
         <View style = {styles.container}>
-          <FlatList data={homeCategories}
-          renderItem={(item) => {
-                  let category = item['item'];
-                return <CategoryCard key= {`key-${category.name}`} name={category.name} image = {category.image} style={styles.card}/>  
-              }
+            {
+                loader &&
+                <ActivityIndicator animating={true} color={Config.APP_BASE_COLOR} size="large"/>
             }
-          numColumns={2}/>
+            {
+                !loader &&
+                <FlatList data={homeCategories}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={(item) => {
+                    let category = item['item'];
+                    return <CategoryCard key= {`key-${category.name}`} 
+                    category = {category}
+                    onPressCategory = {handleCategoryClick}/>  
+                }
+                }
+                mColumns={2}/>
+            }
         </View>
     )
 }
@@ -34,4 +63,4 @@ const styles = StyleSheet.create ({
     }
  })
 
-export default HomeCategory
+export default HomeCategory;

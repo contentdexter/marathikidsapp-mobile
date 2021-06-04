@@ -3,10 +3,15 @@ import { Card } from 'react-native-paper';
 import * as Config from './../common/config';
 import { StyleSheet  } from 'react-native';
 
-const CategoryCard = ({name, image}) => {
-    return <Card key={name} style={styles.card}>
-    <Card.Cover source={{ uri: `${Config.HOME_CATEGORY_IMAGE_PATH}${image}` }} style={styles.image}/>
-    <Card.Title title={name} />
+const CategoryCard = ({
+  category,
+  onPressCategory
+}) => {
+    return <Card key={category.name} style={styles.card} onPress={() => {
+        onPressCategory(category.id, category.type, category.name);
+      }}>
+    <Card.Cover source={{ uri: `${Config.HOME_CATEGORY_IMAGE_PATH}${category.image}` }} style={styles.image}/>
+    <Card.Title title={category.name} />
   </Card>
 }
 
