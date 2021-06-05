@@ -1,10 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import { StyleSheet } from 'react-native';
-import { Button } from 'react-native-elements';
 import {CustomStyles} from './../../styles';
+import { AntDesign } from '@expo/vector-icons';
+import * as Config from './../common/config';
 
 export const HomeScreen = ({ navigation }) => {
+    const [playButtonColor, setPlayButtonColor] = useState(Config.APP_BASE_COLOR);
+
+    const colors = [
+      'white',
+      'black',
+      'blue',
+      'green',
+      'pink',
+      'red',
+      'purple',
+      'yellow',
+      'gray',
+      'lilac',
+    ];
+    
+    React.useEffect(() => {
+      const interval = setInterval(() => {
+        setPlayButtonColor(randomHex());
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }, []);
+
+    let randomHex = () => {
+        let letters = "0123456789ABCDEF";
+        let color = "#";
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    };
     return (
         <View style={styles.container}>
             <View style={styles.viewTop}>
@@ -13,15 +45,9 @@ export const HomeScreen = ({ navigation }) => {
                 <Text style={styles.lastName}>App</Text>
             </View>
             <View style={styles.viewBottom}>
-                <Button
-                onPress={() => {
+                <AntDesign name="playcircleo" size={80} color={playButtonColor} onPress={() => {
                   navigation.navigate('Home Category')
-                }}
-                title="Play"
-                type="outline"
-                buttonStyle={{height: 50, width: 150, borderRadius: 15}}
-                accessibilityLabel="Start learning"
-                />
+                }}/>
             </View>
         </View>
     )
@@ -50,8 +76,8 @@ const styles = StyleSheet.create({
       ...CustomStyles.smallRedText
     },
     viewTop: {
-      flex: 3,
-      justifyContent: 'center',
+      flex: 2,
+      justifyContent: 'flex-end',
       alignItems: 'center'
     },
     viewBottom: {

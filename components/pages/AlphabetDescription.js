@@ -32,7 +32,7 @@ const AlphabetDescription = ({route, navigation}) => {
         if (soundMute === true) {
             sound.stopAsync();
         } else {
-            //playSound(currentSound);
+            playSound(currentSound);
         }
     }, [soundMute])
 
@@ -59,7 +59,7 @@ const AlphabetDescription = ({route, navigation}) => {
             setAlphabetDescription(result);
             setLoader(false);
             setCurrentSound(result.audio);
-           // playSound(result.audio);
+            playSound(result.audio);
         })
     }
 
@@ -67,10 +67,9 @@ const AlphabetDescription = ({route, navigation}) => {
         let audioPath = `${Config.ALPHABET_DESCRIPTION_AUDIO_PATH}${audio}`;
         const sound = new Audio.Sound();
         try {
-        await sound.loadAsync({ uri: audioPath },
-        { shouldPlay: true });
-        setSound(sound);
-        await sound.playAsync();
+            await sound.loadAsync({ uri: audioPath }, { shouldPlay: true });
+            setSound(sound);
+            await sound.playAsync();
         } catch (error) {
             console.log('Error in playing sound')
         }
