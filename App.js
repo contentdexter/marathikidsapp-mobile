@@ -10,6 +10,8 @@ import DrawAlphabet from './components/pages/DrawAlphabet';
 import * as Font from "expo-font";
 import { useFonts } from "@use-expo/font";
 import * as Config from './components/common/config';
+import { Provider } from 'react-redux';
+import { store } from './components/store/store';
 
 const Stack = createStackNavigator();
 const customFonts = {
@@ -21,6 +23,7 @@ export default function App(props) {
   const [isLoaded] = useFonts(customFonts);
   
     return (
+      <Provider store={store}>
     <NavigationContainer>
     <Stack.Navigator screenOptions={{
       headerStyle: {
@@ -53,5 +56,6 @@ export default function App(props) {
         options={({route}) => ({title: route.params.headerTitle})}/>
       </Stack.Navigator>
     </NavigationContainer>
+    </Provider>
   );
 }

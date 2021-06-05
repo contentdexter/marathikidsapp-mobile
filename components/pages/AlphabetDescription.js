@@ -11,6 +11,7 @@ import {
     prepareNextAlphabetIndex,
     preparePrevAlphabetIndex
  } from './../common/service';
+ import { useDispatch, useSelector } from 'react-redux';
 
 const AlphabetDescription = ({route, navigation}) => {
     let {categoryId, alphabetId} = route.params;
@@ -19,6 +20,7 @@ const AlphabetDescription = ({route, navigation}) => {
     const [sound, setSound] = useState();
     const [soundMute, setSoundMute] = useState(false);
     const [currentSound, setCurrentSound] = useState(null);
+    const alphabets = useSelector((state) => state.alphabets.alphabets);
 
     React.useEffect(() => {
         return sound
@@ -45,22 +47,21 @@ const AlphabetDescription = ({route, navigation}) => {
     }, [alphabetId])
 
     const handleNextPress = () => {
-        let nextAlphabet = prepareNextAlphabetIndex(alphabetId);
+        let nextAlphabet = prepareNextAlphabetIndex(alphabetId, alphabets);
         navigation.navigate('AlphabetDescription', {
             categoryId: categoryId, 
-            alphabetId: nextAlphabet.key,
-            headerTitle: nextAlphabet.text
+            alphabetId: nextAlphabet.id,
+            headerTitle: nextAlphabet.name
         })
     }
 
     const prepareAlphabet = (categoryId, alphabetId) => {
-        let alphabet = Api.fetchAlphabetDescription(categoryId, alphabetId);
-        alphabet.then(result => result.json()).then(result => {
-            setAlphabetDescription(result);
+        let alphabet = alphabets.filter(item => item.id === alphabetId);
+        if (alphabet.length > 0) {
+            setAlphabetDescription(alphabet[0]);
             setLoader(false);
-            setCurrentSound(result.audio);
-            playSound(result.audio);
-        })
+            playSound(alphabet[0].audio);
+        }
     }
 
     async function playSound(audio) {
@@ -76,11 +77,11 @@ const AlphabetDescription = ({route, navigation}) => {
     }
 
     const handlePrevPress = () => {
-        let nextAlphabet = preparePrevAlphabetIndex(alphabetId);
+        let nextAlphabet = preparePrevAlphabetIndex(alphabetId, alphabets);
         navigation.navigate('AlphabetDescription', {
             categoryId: categoryId, 
-            alphabetId: nextAlphabet.key,
-            headerTitle: nextAlphabet.text
+            alphabetId: nextAlphabet.id,
+            headerTitle: nextAlphabet.name
         })
     }
 
