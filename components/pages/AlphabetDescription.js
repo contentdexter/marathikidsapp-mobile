@@ -4,21 +4,90 @@ import AlphabetImageCard from './../subcomponents/AlphabetImageCard';
 import * as Api from './../common/api';
 import { ActivityIndicator } from 'react-native-paper';
 import * as Config from './../common/config';
-import { AntDesign, Entypo } from '@expo/vector-icons';
+import { AntDesign, Entypo, MaterialIcons } from '@expo/vector-icons';
+import { Audio } from 'expo-av';
+import {
+    prepareNextAlphabetIndex,
+    preparePrevAlphabetIndex
+ } from './../common/service';
 
-const AlphabetDescription = ({route}) => {
+const AlphabetDescription = ({route, navigation}) => {
+    let {categoryId, alphabetId} = route.params;
     const [alphabetDescription, setAlphabetDescription] = useState(null);
     const [loader, setLoader] = useState(false);
+    const [sound, setSound] = useState();
+    const [soundMute, setSoundMute] = useState(false);
+    const [currentSound, setCurrentSound] = useState(null);
 
-    let {categoryId, alphabetId} = route.params;
+    React.useEffect(() => {
+        return sound
+        ? () => {
+            sound.unloadAsync(); 
+        }
+        : undefined;
+    }, [sound]);
+
+    useEffect(() => {
+        if (soundMute === true) {
+            sound.stopAsync();
+        } else {
+            //playSound(currentSound);
+        }
+    }, [soundMute])
+
     useEffect(() => {
         setLoader(true);
+        setSoundMute(false);
+        setSound(null);
+        setCurrentSound(null);
+        prepareAlphabet(categoryId, alphabetId);
+    }, [alphabetId])
+
+    const handleNextPress = () => {
+        let nextAlphabet = prepareNextAlphabetIndex(alphabetId);
+        navigation.navigate('AlphabetDescription', {
+            categoryId: categoryId, 
+            alphabetId: nextAlphabet.key,
+            headerTitle: nextAlphabet.text
+        })
+    }
+
+    const prepareAlphabet = (categoryId, alphabetId) => {
         let alphabet = Api.fetchAlphabetDescription(categoryId, alphabetId);
         alphabet.then(result => result.json()).then(result => {
             setAlphabetDescription(result);
             setLoader(false);
+            setCurrentSound(result.audio);
+           // playSound(result.audio);
         })
-    }, [])
+    }
+
+    async function playSound(audio) {
+        let audioPath = `${Config.ALPHABET_DESCRIPTION_AUDIO_PATH}${audio}`;
+        const sound = new Audio.Sound();
+        try {
+        await sound.loadAsync({ uri: audioPath },
+        { shouldPlay: true });
+        setSound(sound);
+        await sound.playAsync();
+        } catch (error) {
+            console.log('Error in playing sound')
+        }
+    }
+
+    const handlePrevPress = () => {
+        let nextAlphabet = preparePrevAlphabetIndex(alphabetId);
+        navigation.navigate('AlphabetDescription', {
+            categoryId: categoryId, 
+            alphabetId: nextAlphabet.key,
+            headerTitle: nextAlphabet.text
+        })
+    }
+
+    const toggleSoundMute = () => {
+        setSoundMute(!soundMute);
+    }
+
     return <View style={styles.container}>
         {
             loader &&
@@ -35,16 +104,29 @@ const AlphabetDescription = ({route}) => {
                 </View>
                 <View style={styles.buttonContainer}>
                     <View style={styles.prevIconContainer}>
-                        <AntDesign name="leftcircle" size={40} color="gray"/>
+                        <AntDesign name="leftcircle" 
+                        size = {40} 
+                        color = "gray"
+                        onPress = {handlePrevPress}/>
                     </View>
                     <View style={styles.editIconContainer}>
                         <Entypo name="pencil" size={40} color="white" style={styles.editIcon} iconStyle={{size: 5}}/>
                     </View>
                     <View style={styles.soundIconContainer}>
-                        <AntDesign name="sound" size={40} color="white" style={styles.soundIcon}/>
+                        {
+                            soundMute === false &&
+                            <MaterialIcons name="volume-up" size={40} color="white" style={styles.soundIcon} onPress={toggleSoundMute}/>
+                        }
+                        {
+                            soundMute === true &&
+                            <MaterialIcons name="volume-off" size={40} color="white" style={styles.soundIcon} onPress={toggleSoundMute}/>
+                        }
                     </View>
                     <View style={styles.nextIconContainer}>
-                        <AntDesign name="rightcircle" size={40} color="gray" />
+                        <AntDesign name="rightcircle" 
+                        size = {40} 
+                        color = "gray" 
+                        onPress = {handleNextPress}/>
                     </View>
                 </View>
             </View>
