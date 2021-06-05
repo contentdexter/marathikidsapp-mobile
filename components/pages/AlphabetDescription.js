@@ -7,6 +7,7 @@ import * as Config from './../common/config';
 import { AntDesign, Entypo, MaterialIcons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import {
+    getCurrentAlphabet,
     prepareNextAlphabetIndex,
     preparePrevAlphabetIndex
  } from './../common/service';
@@ -88,6 +89,15 @@ const AlphabetDescription = ({route, navigation}) => {
         setSoundMute(!soundMute);
     }
 
+    const handleEditPress = () => {
+        let currentAlphabet = getCurrentAlphabet(alphabetId);
+        navigation.navigate('DrawAlphabet', {
+            categoryId: categoryId, 
+            alphabetId: currentAlphabet.key,
+            headerTitle: currentAlphabet.text
+        })
+    }
+
     return <View style={styles.container}>
         {
             loader &&
@@ -99,7 +109,7 @@ const AlphabetDescription = ({route, navigation}) => {
                 <View style={styles.imageContainer}>
                 {
                     alphabetDescription !== null &&
-                    <AlphabetImageCard alphabetDescription = {alphabetDescription}/>
+                    <AlphabetImageCard image = {alphabetDescription.actual_image}/>
                 }
                 </View>
                 <View style={styles.buttonContainer}>
@@ -110,7 +120,11 @@ const AlphabetDescription = ({route, navigation}) => {
                         onPress = {handlePrevPress}/>
                     </View>
                     <View style={styles.editIconContainer}>
-                        <Entypo name="pencil" size={40} color="white" style={styles.editIcon} iconStyle={{size: 5}}/>
+                        <Entypo name="pencil" size={40} 
+                        color="white" 
+                        style={styles.editIcon} 
+                        iconStyle={{size: 5}}
+                        onPress = {handleEditPress}/>
                     </View>
                     <View style={styles.soundIconContainer}>
                         {
@@ -176,7 +190,7 @@ const styles = StyleSheet.create({
         padding: 20
     },
     soundIcon: {
-        backgroundColor: 'green',
+        backgroundColor: '#17D60A',
         borderRadius: 50,
         padding: 20
     }

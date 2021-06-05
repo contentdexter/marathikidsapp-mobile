@@ -6,6 +6,7 @@ import HomeCategory from './components/pages/HomeCategory';
 import HomeScreen from './components/pages/HomeScreen';
 import Alphabets from './components/pages/Aphabets';
 import AlphabetDescription from './components/pages/AlphabetDescription';
+import DrawAlphabet from './components/pages/DrawAlphabet';
 import * as Font from "expo-font";
 import { useFonts } from "@use-expo/font";
 import * as Config from './components/common/config';
@@ -45,6 +46,10 @@ export default function App(props) {
 
         <Stack.Screen name="AlphabetDescription" 
         component={AlphabetDescription} 
+        options={({route}) => ({title: route.params.headerTitle})}/>
+
+        <Stack.Screen name="DrawAlphabet" 
+        component={DrawAlphabet} 
         options={({route}) => ({title: route.params.headerTitle})}/>
       </Stack.Navigator>
     </NavigationContainer>

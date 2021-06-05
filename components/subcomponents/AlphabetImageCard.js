@@ -2,8 +2,8 @@ import React from 'react';
 import * as Config from './../common/config';
 import { StyleSheet, Image } from 'react-native';
 
-const AlphabetImageCard = ({alphabetDescription}) => {
-  let imagePath = `${Config.ALPHABET_DESCRIPTION_PATH}${alphabetDescription.actual_image}`;
+const AlphabetImageCard = ({image}) => {
+  let imagePath = `${Config.ALPHABET_DESCRIPTION_PATH}${image}`;
   return <Image source={{uri: imagePath}} style={styles.image}/>
 }
 

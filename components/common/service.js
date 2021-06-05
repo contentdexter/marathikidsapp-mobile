@@ -4,6 +4,11 @@ export const getCurrentAlphabetIndex = (alphabetId) => {
     return Config.MARATHI_ALPHABETS_SWAR.findIndex(item => item.key === alphabetId);
 }
 
+export const getCurrentAlphabet = (alphabetId) => {
+    let index = getCurrentAlphabetIndex(alphabetId);
+    return Config.MARATHI_ALPHABETS_SWAR[index];
+}
+
 export const prepareNextAlphabetIndex = (alphabetId) => {
     let currentAlphabetIndex = getCurrentAlphabetIndex(alphabetId);
     if (currentAlphabetIndex === Config.MARATHI_ALPHABETS_SWAR.length - 1) {
