@@ -9,11 +9,13 @@ import {
     preparePrevAlphabetIndex,
     prepareNextAlphabetIndex
 } from './../common/service';
+import { useDispatch, useSelector } from 'react-redux';
 
 const DrawAlphabet = ({route, navigation}) => {
     let {categoryId, alphabetId} = route.params;
     const [alphabetDescription, setAlphabetDescription] = useState(null);
     const [loader, setLoader] = useState(false);
+    const alphabets = useSelector((state) => state.alphabets.alphabets);
 
     useEffect(() => {
         setLoader(true);
@@ -21,28 +23,29 @@ const DrawAlphabet = ({route, navigation}) => {
     }, [alphabetId])
 
     const prepareAlphabet = (categoryId, alphabetId) => {
-        let alphabet = Api.fetchAlphabetDescription(categoryId, alphabetId);
-        alphabet.then(result => result.json()).then(result => {
-            setAlphabetDescription(result);
+        let alphabet = alphabets.filter(item => item.id === alphabetId);
+        console.log('alphabet', alphabet)
+        if (alphabet.length > 0) {
+            setAlphabetDescription(alphabet[0]);
             setLoader(false);
-        })
+        }
     }
 
     const handlePrevPress = () => {
-        let nextAlphabet = preparePrevAlphabetIndex(alphabetId);
+        let nextAlphabet = preparePrevAlphabetIndex(alphabetId, alphabets);
         navigation.navigate('DrawAlphabet', {
             categoryId: categoryId, 
-            alphabetId: nextAlphabet.key,
-            headerTitle: nextAlphabet.text
+            alphabetId: nextAlphabet.id,
+            headerTitle: nextAlphabet.name
         })
     }
 
     const handleNextPress = () => {
-        let nextAlphabet = prepareNextAlphabetIndex(alphabetId);
+        let nextAlphabet = prepareNextAlphabetIndex(alphabetId, alphabets);
         navigation.navigate('DrawAlphabet', {
             categoryId: categoryId, 
-            alphabetId: nextAlphabet.key,
-            headerTitle: nextAlphabet.text
+            alphabetId: nextAlphabet.id,
+            headerTitle: nextAlphabet.name
         })
     }
     
@@ -64,22 +67,34 @@ const DrawAlphabet = ({route, navigation}) => {
                         <AntDesign name="leftcircle" 
                         size = {40} 
                         color = "gray"
-                        onPress={handlePrevPress}/>
+                        onPress={handlePrevPress}
+                        />
                     </View>
                     <View style={styles.crossIconContainer}>
-                        <Entypo name="cross" size={30} color="white" style={styles.crossIcon}/>
+                        <Entypo name="cross" 
+                        size={30} 
+                        color="white" 
+                        style={styles.crossIcon}
+                        />
                     </View>
                     <View style={styles.refreshIconContainer}>
-                        <Feather name="refresh-cw" size={40} color="white" style={styles.refreshIcon}/>
+                        <Feather name="refresh-cw" 
+                        size={40} color="white" 
+                        style={styles.refreshIcon}
+                        />
                     </View>
                     <View style={styles.colorIconContainer}>
-                        <FontAwesome name="eyedropper" size={40} color="white" style={styles.colorIcon}/>
+                        <FontAwesome name="eyedropper" 
+                        size={40} 
+                        color="white" 
+                        style={styles.colorIcon}/>
                     </View>
                     <View style={styles.nextIconContainer}>
                         <AntDesign name="rightcircle" 
                         size = {40} 
                         color = "gray" 
-                        onPress={handleNextPress}/>
+                        onPress={handleNextPress}
+                        />
                     </View>
                 </View>
             </View>

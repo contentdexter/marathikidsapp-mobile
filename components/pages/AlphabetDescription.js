@@ -90,11 +90,11 @@ const AlphabetDescription = ({route, navigation}) => {
     }
 
     const handleEditPress = () => {
-        let currentAlphabet = getCurrentAlphabet(alphabetId);
+        let currentAlphabet = getCurrentAlphabet(alphabetId, alphabets);
         navigation.navigate('DrawAlphabet', {
             categoryId: categoryId, 
-            alphabetId: currentAlphabet.key,
-            headerTitle: currentAlphabet.text
+            alphabetId: currentAlphabet.id,
+            headerTitle: currentAlphabet.name
         })
     }
 

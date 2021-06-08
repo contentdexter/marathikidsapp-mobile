@@ -4,10 +4,10 @@ export const getCurrentAlphabetIndex = (alphabetId, alphabets) => {
     return alphabets.findIndex(item => item.id === alphabetId);
 }
 
-export const getCurrentAlphabet = (alphabetId) => {
-    let index = getCurrentAlphabetIndex(alphabetId);
-    return Config.MARATHI_ALPHABETS_SWAR[index];
-}
+// export const getCurrentAlphabet = (alphabetId) => {
+//     let index = getCurrentAlphabetIndex(alphabetId);
+//     return Config.MARATHI_ALPHABETS_SWAR[index];
+// }
 
 export const prepareNextAlphabetIndex = (alphabetId, alphabets) => {
     let currentAlphabetIndex = getCurrentAlphabetIndex(alphabetId, alphabets);
@@ -27,6 +27,12 @@ export const preparePrevAlphabetIndex = (alphabetId, alphabets) => {
     }
 
     currentAlphabetIndex--;
+
+    return alphabets[currentAlphabetIndex];
+}
+
+export const getCurrentAlphabet = (alphabetId, alphabets) => {
+    let currentAlphabetIndex = getCurrentAlphabetIndex(alphabetId, alphabets);
 
     return alphabets[currentAlphabetIndex];
 }
