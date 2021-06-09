@@ -15,7 +15,7 @@ const DrawAlphabet = ({route, navigation}) => {
     let {categoryId, alphabetId} = route.params;
     const [alphabetDescription, setAlphabetDescription] = useState(null);
     const [loader, setLoader] = useState(false);
-    const alphabets = useSelector((state) => state.alphabets.alphabets);
+    const alphabets = useSelector((state) => state.application.alphabets);
 
     useEffect(() => {
         setLoader(true);

@@ -11,6 +11,9 @@ import {
     preparePrevContentIndex
  } from './../common/service';
  import { useSelector } from 'react-redux';
+ import HTMLView from 'react-native-htmlview';
+ import { Provider } from 'react-native-paper';
+ import InfoModal from './../subcomponents/InfoModal';
 
 const AlphabetDescription = ({route, navigation}) => {
     let {categoryId, alphabetId} = route.params;
@@ -20,6 +23,9 @@ const AlphabetDescription = ({route, navigation}) => {
     const [soundMute, setSoundMute] = useState(false);
     const [currentSound, setCurrentSound] = useState(null);
     const alphabets = useSelector((state) => state.application.alphabets);
+    const [visible, setVisible] = React.useState(false);
+    const showModal = () => setVisible(true);
+    const hideModal = () => setVisible(false);
 
     React.useEffect(() => {
         return sound
@@ -97,7 +103,7 @@ const AlphabetDescription = ({route, navigation}) => {
         })
     }
 
-    return <View style={styles.container}>
+    return <Provider><View style={styles.container}>
         {
             loader &&
             <ActivityIndicator animating={true} color={Config.APP_BASE_COLOR} size="large"/>
@@ -105,6 +111,15 @@ const AlphabetDescription = ({route, navigation}) => {
         {
             !loader &&
             <View style={{flex: 1}}>
+                {
+                    alphabetDescription !== null &&
+                    <InfoModal hideModal = {hideModal} 
+                    visible = {visible}>
+                        <HTMLView
+                            value={alphabetDescription.description}
+                        />
+                    </InfoModal>
+                }
                 <View style={styles.imageContainer}>
                 {
                     alphabetDescription !== null &&
@@ -118,8 +133,17 @@ const AlphabetDescription = ({route, navigation}) => {
                         color = "gray"
                         onPress = {handlePrevPress}/>
                     </View>
+                    <View style={styles.crossIconContainer}>
+                        <Entypo name="info" 
+                        size={30} 
+                        color="white" 
+                        style={styles.crossIcon}
+                        onPress = {showModal}
+                        />
+                    </View>
                     <View style={styles.editIconContainer}>
-                        <Entypo name="pencil" size={40} 
+                        <Entypo name="pencil" 
+                        size={40} 
                         color="white" 
                         style={styles.editIcon} 
                         iconStyle={{size: 5}}
@@ -128,11 +152,18 @@ const AlphabetDescription = ({route, navigation}) => {
                     <View style={styles.soundIconContainer}>
                         {
                             soundMute === false &&
-                            <MaterialIcons name="volume-up" size={40} color="white" style={styles.soundIcon} onPress={toggleSoundMute}/>
+                            <MaterialIcons name="volume-up" 
+                            size={40} color="white" 
+                            style={styles.soundIcon} 
+                            onPress={toggleSoundMute}/>
                         }
                         {
                             soundMute === true &&
-                            <MaterialIcons name="volume-off" size={40} color="white" style={styles.soundIcon} onPress={toggleSoundMute}/>
+                            <MaterialIcons name="volume-off" 
+                            size={40} 
+                            color="white" 
+                            style={styles.soundIcon} 
+                            onPress={toggleSoundMute}/>
                         }
                     </View>
                     <View style={styles.nextIconContainer}>
@@ -144,7 +175,7 @@ const AlphabetDescription = ({route, navigation}) => {
                 </View>
             </View>
         }
-    </View>
+    </View></Provider>
 }
 
 export default AlphabetDescription;
@@ -183,6 +214,10 @@ const styles = StyleSheet.create({
         flex: 2,
         alignItems: 'flex-start'
     },
+    crossIconContainer: {
+        flex: 1,
+        alignItems: 'flex-end',
+    },
     editIcon: {
         backgroundColor: Config.APP_BASE_COLOR,
         borderRadius: 50,
@@ -192,5 +227,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#17D60A',
         borderRadius: 50,
         padding: 20
+    },
+    crossIcon: {
+        backgroundColor: '#000',
+        borderRadius: 50,
+        padding: 8
     }
 })

@@ -1,28 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import DetailImageCard from './../subcomponents/DetailImageCard';
 import { ActivityIndicator } from 'react-native-paper';
 import * as Config from './../common/config';
 import { AntDesign, Entypo, MaterialIcons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import {
-    getCurrentAlphabet,
     prepareNextContentIndex,
     preparePrevContentIndex
  } from './../common/service';
  import { useSelector, useDispatch } from 'react-redux';
  import * as Actions from './../common/actions';
+ import { Provider } from 'react-native-paper';
+ import InfoModal from './../subcomponents/InfoModal';
+ import HTMLView from 'react-native-htmlview';
+
 
 const SubCategoryDetails = ({route, navigation}) => {
     let {categoryId, subCategoryId} = route.params;
     const dispatch = useDispatch();
     const [subCategoryDetail, setSubCategoryDetail] = useState(null);
-    //const [loader, setLoader] = useState(false);
     const [sound, setSound] = useState();
     const [soundMute, setSoundMute] = useState(false);
     const [currentSound, setCurrentSound] = useState(null);
     const subCategory = useSelector((state) => state.application.subCategory);
     const loader = useSelector((state) => state.application.loader);
+    const [visible, setVisible] = React.useState(false);
+    const showModal = () => setVisible(true);
+    const hideModal = () => setVisible(false);
+    
 
     React.useEffect(() => {
         return sound
@@ -91,7 +97,7 @@ const SubCategoryDetails = ({route, navigation}) => {
         setSoundMute(!soundMute);
     }
 
-    return <View style={styles.container}>
+    return <Provider><View style={styles.container}>
         {
             loader &&
             <ActivityIndicator animating={true} color={Config.APP_BASE_COLOR} size="large"/>
@@ -99,6 +105,16 @@ const SubCategoryDetails = ({route, navigation}) => {
         {
             !loader &&
             <View style={{flex: 1}}>
+                {
+                    subCategoryDetail !== null &&
+                    <InfoModal hideModal = {hideModal} 
+                    visible = {visible}>
+                        <HTMLView
+                            value={subCategoryDetail.description}
+                        />
+                    </InfoModal>
+                }
+                
                 <View style={styles.imageContainer}>
                 {
                     subCategoryDetail !== null &&
@@ -123,7 +139,7 @@ const SubCategoryDetails = ({route, navigation}) => {
                         }
                     </View>
                     <View>
-                        <Entypo name="info" size={40} color="white" style={styles.editIcon}/>
+                        <Entypo name="info" size={40} color="white" style={styles.editIcon} onPress={showModal}/>
                     </View>
                     <View style={styles.nextIconContainer}>
                         <AntDesign name="rightcircle" 
@@ -135,6 +151,7 @@ const SubCategoryDetails = ({route, navigation}) => {
             </View>
         }
     </View>
+    </Provider>
 }
 
 export default SubCategoryDetails;
