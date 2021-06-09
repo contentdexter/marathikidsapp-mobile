@@ -2,18 +2,17 @@ import React, { useEffect } from 'react';
 import { View, StyleSheet, FlatList, ScrollView  } from 'react-native';
 import TextCard from './../subcomponents/TextCard';
 import { useDispatch, useSelector } from 'react-redux';
+import * as Actions from './../common/actions';
 
 const Alphabets = ({ navigation, route }) => {
     let {categoryId} = route.params;
     const dispatch = useDispatch();
-    const alphabets = useSelector((state) => state.alphabets.alphabets);
+    const alphabets = useSelector((state) => state.application.alphabets);
 
     useEffect(() => {
-        dispatch({
-            type: 'FETCH_ALL_ALPHABETS',
-            categoryId: categoryId,
-        })
+        dispatch(Actions.fetchAllAlphabets(categoryId));
     }, [])
+
     const handleAlphabetClick = (alphabetId, alphabetName) => {
         navigation.navigate('AlphabetDescription', {
             categoryId: route.params.categoryId, 

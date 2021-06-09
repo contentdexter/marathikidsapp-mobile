@@ -12,6 +12,8 @@ import { useFonts } from "@use-expo/font";
 import * as Config from './components/common/config';
 import { Provider } from 'react-redux';
 import { store } from './components/store/store';
+import SubCategory from './components/pages/SubCategory';
+import SubCategoryDetails from './components/pages/SubCategoryDetails';
 
 const Stack = createStackNavigator();
 const customFonts = {
@@ -53,6 +55,15 @@ export default function App(props) {
 
         <Stack.Screen name="DrawAlphabet" 
         component={DrawAlphabet} 
+        options={({route}) => ({title: route.params.headerTitle})}/>
+
+        <Stack.Screen name="SubCategory" 
+        component={SubCategory} 
+        options={({route}) => ({title: route.params.headerTitle})}/>
+
+
+        <Stack.Screen name="SubCategoryDetails" 
+        component={SubCategoryDetails} 
         options={({route}) => ({title: route.params.headerTitle})}/>
       </Stack.Navigator>
     </NavigationContainer>

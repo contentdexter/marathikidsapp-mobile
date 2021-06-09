@@ -6,10 +6,10 @@ import * as Api from './../common/api';
 import { ActivityIndicator } from 'react-native-paper';
 import * as Config from './../common/config';
 import {
-    preparePrevAlphabetIndex,
-    prepareNextAlphabetIndex
+    preparePrevContentIndex,
+    prepareNextContentIndex
 } from './../common/service';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 const DrawAlphabet = ({route, navigation}) => {
     let {categoryId, alphabetId} = route.params;
@@ -19,12 +19,11 @@ const DrawAlphabet = ({route, navigation}) => {
 
     useEffect(() => {
         setLoader(true);
-        prepareAlphabet(categoryId, alphabetId);
+        prepareAlphabet(alphabetId);
     }, [alphabetId])
 
-    const prepareAlphabet = (categoryId, alphabetId) => {
+    const prepareAlphabet = (alphabetId) => {
         let alphabet = alphabets.filter(item => item.id === alphabetId);
-        console.log('alphabet', alphabet)
         if (alphabet.length > 0) {
             setAlphabetDescription(alphabet[0]);
             setLoader(false);
@@ -32,7 +31,7 @@ const DrawAlphabet = ({route, navigation}) => {
     }
 
     const handlePrevPress = () => {
-        let nextAlphabet = preparePrevAlphabetIndex(alphabetId, alphabets);
+        let nextAlphabet = preparePrevContentIndex(alphabetId, alphabets);
         navigation.navigate('DrawAlphabet', {
             categoryId: categoryId, 
             alphabetId: nextAlphabet.id,
@@ -41,7 +40,7 @@ const DrawAlphabet = ({route, navigation}) => {
     }
 
     const handleNextPress = () => {
-        let nextAlphabet = prepareNextAlphabetIndex(alphabetId, alphabets);
+        let nextAlphabet = prepareNextContentIndex(alphabetId, alphabets);
         navigation.navigate('DrawAlphabet', {
             categoryId: categoryId, 
             alphabetId: nextAlphabet.id,

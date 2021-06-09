@@ -5,24 +5,27 @@ import * as Config from './../common/config';
 import CategoryCard from './../subcomponents/CategoryCard';
 import { ActivityIndicator } from 'react-native-paper';
 import * as Api from './../common/api';
+import { useDispatch, useSelector } from 'react-redux';
+import * as Actions from './../common/actions';
 
 const HomeCategory = ({ navigation }) => {
-    const [homeCategories, setHomeCategories] = useState([]);
-    const [loader, setLoader] = useState(false);
-    
+   // const [homeCategories, setHomeCategories] = useState([]);
+    const dispatch = useDispatch();
+    const homeCategories = useSelector((state) => state.application.category);
+    const loader = useSelector((state) => state.application.loader);
+
     useEffect(() => {
-        setLoader(true);
-        let homeCategories = Api.fetchAllCategory();
-        homeCategories.then(result => result.json()).then(result => {
-            setHomeCategories(result);
-            setLoader(false);
-        });
+        dispatch(Actions.fetchAllCategory());
+        dispatch(Actions.showLoader());
     }, []);
 
     const handleCategoryClick = (categoryId, categoryType, categoryName) => {
         let nextRoute = 'Alphabets';
         switch (categoryType) {
             case '1': nextRoute = 'Alphabets';
+            break;
+            case '2': nextRoute = 'SubCategory';
+            break;
         }
 
         navigation.navigate(nextRoute, {
@@ -48,7 +51,7 @@ const HomeCategory = ({ navigation }) => {
                     onPressCategory = {handleCategoryClick}/>  
                 }
                 }
-                mColumns={2}/>
+                numColumns={2}/>
             }
         </View>
     )

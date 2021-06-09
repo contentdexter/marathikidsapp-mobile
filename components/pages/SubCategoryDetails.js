@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import AlphabetImageCard from './../subcomponents/AlphabetImageCard';
+import DetailImageCard from './../subcomponents/DetailImageCard';
 import { ActivityIndicator } from 'react-native-paper';
 import * as Config from './../common/config';
 import { AntDesign, Entypo, MaterialIcons } from '@expo/vector-icons';
@@ -10,16 +10,19 @@ import {
     prepareNextContentIndex,
     preparePrevContentIndex
  } from './../common/service';
- import { useSelector } from 'react-redux';
+ import { useSelector, useDispatch } from 'react-redux';
+ import * as Actions from './../common/actions';
 
-const AlphabetDescription = ({route, navigation}) => {
-    let {categoryId, alphabetId} = route.params;
-    const [alphabetDescription, setAlphabetDescription] = useState(null);
-    const [loader, setLoader] = useState(false);
+const SubCategoryDetails = ({route, navigation}) => {
+    let {categoryId, subCategoryId} = route.params;
+    const dispatch = useDispatch();
+    const [subCategoryDetail, setSubCategoryDetail] = useState(null);
+    //const [loader, setLoader] = useState(false);
     const [sound, setSound] = useState();
     const [soundMute, setSoundMute] = useState(false);
     const [currentSound, setCurrentSound] = useState(null);
-    const alphabets = useSelector((state) => state.application.alphabets);
+    const subCategory = useSelector((state) => state.application.subCategory);
+    const loader = useSelector((state) => state.application.loader);
 
     React.useEffect(() => {
         return sound
@@ -38,33 +41,33 @@ const AlphabetDescription = ({route, navigation}) => {
     }, [soundMute])
 
     useEffect(() => {
-        setLoader(true);
+        dispatch(Actions.showLoader());
         setSoundMute(false);
         setSound(null);
         setCurrentSound(null);
-        prepareAlphabet(alphabetId);
-    }, [alphabetId])
+        prepareDetail(subCategoryId);
+    }, [subCategoryId])
 
     const handleNextPress = () => {
-        let nextAlphabet = prepareNextContentIndex(alphabetId, alphabets);
-        navigation.navigate('AlphabetDescription', {
+        let nextSubCategory = prepareNextContentIndex(subCategoryId, subCategory);
+        navigation.navigate('SubCategoryDetails', {
             categoryId: categoryId, 
-            alphabetId: nextAlphabet.id,
-            headerTitle: nextAlphabet.name
+            subCategoryId: nextSubCategory.id,
+            headerTitle: nextSubCategory.name
         })
     }
 
-    const prepareAlphabet = (alphabetId) => {
-        let alphabet = alphabets.filter(item => item.id === alphabetId);
-        if (alphabet.length > 0) {
-            setAlphabetDescription(alphabet[0]);
-            setLoader(false);
-            playSound(alphabet[0].audio);
+    const prepareDetail = (subCategoryId) => {
+        let subCategoryList = subCategory.filter(item => item.id === subCategoryId);
+        if (subCategoryList.length > 0) {
+            setSubCategoryDetail(subCategoryList[0]);
+            dispatch(Actions.hideLoader());
+            playSound(subCategoryList[0].audio);
         }
     }
 
     async function playSound(audio) {
-        let audioPath = `${Config.ALPHABET_DESCRIPTION_AUDIO_PATH}${audio}`;
+        let audioPath = `${Config.SUB_CATEGORY_AUDIO_PATH}${audio}`;
         const sound = new Audio.Sound();
         try {
             await sound.loadAsync({ uri: audioPath }, { shouldPlay: true });
@@ -76,25 +79,16 @@ const AlphabetDescription = ({route, navigation}) => {
     }
 
     const handlePrevPress = () => {
-        let nextAlphabet = preparePrevContentIndex(alphabetId, alphabets);
-        navigation.navigate('AlphabetDescription', {
+        let nextSubCategory = preparePrevContentIndex(subCategoryId, subCategory);
+        navigation.navigate('SubCategoryDetails', {
             categoryId: categoryId, 
-            alphabetId: nextAlphabet.id,
-            headerTitle: nextAlphabet.name
+            subCategoryId: nextSubCategory.id,
+            headerTitle: nextSubCategory.name
         })
     }
 
     const toggleSoundMute = () => {
         setSoundMute(!soundMute);
-    }
-
-    const handleEditPress = () => {
-        let currentAlphabet = getCurrentAlphabet(alphabetId, alphabets);
-        navigation.navigate('DrawAlphabet', {
-            categoryId: categoryId, 
-            alphabetId: currentAlphabet.id,
-            headerTitle: currentAlphabet.name
-        })
     }
 
     return <View style={styles.container}>
@@ -107,8 +101,8 @@ const AlphabetDescription = ({route, navigation}) => {
             <View style={{flex: 1}}>
                 <View style={styles.imageContainer}>
                 {
-                    alphabetDescription !== null &&
-                    <AlphabetImageCard image = {alphabetDescription.actual_image}/>
+                    subCategoryDetail !== null &&
+                    <DetailImageCard image = {subCategoryDetail.image} basePath = {Config.SUB_CATEGORY_IMAGE_PATH}/>
                 }
                 </View>
                 <View style={styles.buttonContainer}>
@@ -117,13 +111,6 @@ const AlphabetDescription = ({route, navigation}) => {
                         size = {40} 
                         color = "gray"
                         onPress = {handlePrevPress}/>
-                    </View>
-                    <View style={styles.editIconContainer}>
-                        <Entypo name="pencil" size={40} 
-                        color="white" 
-                        style={styles.editIcon} 
-                        iconStyle={{size: 5}}
-                        onPress = {handleEditPress}/>
                     </View>
                     <View style={styles.soundIconContainer}>
                         {
@@ -134,6 +121,9 @@ const AlphabetDescription = ({route, navigation}) => {
                             soundMute === true &&
                             <MaterialIcons name="volume-off" size={40} color="white" style={styles.soundIcon} onPress={toggleSoundMute}/>
                         }
+                    </View>
+                    <View>
+                        <Entypo name="info" size={40} color="white" style={styles.editIcon}/>
                     </View>
                     <View style={styles.nextIconContainer}>
                         <AntDesign name="rightcircle" 
@@ -147,7 +137,7 @@ const AlphabetDescription = ({route, navigation}) => {
     </View>
 }
 
-export default AlphabetDescription;
+export default SubCategoryDetails;
 
 const styles = StyleSheet.create({
     container: {
@@ -176,7 +166,7 @@ const styles = StyleSheet.create({
     },
     editIconContainer: {
         flex: 2,
-        alignItems: 'flex-end',
+        alignItems: 'flex-start',
         marginRight: 30
     },
     soundIconContainer: {

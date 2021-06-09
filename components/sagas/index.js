@@ -1,10 +1,16 @@
 // Imports: Dependencies
 import { all, fork} from 'redux-saga/effects';
 // Imports: Redux Sagas
-import { watchFetchAlphabetsData } from './alphabetsSaga';
+import { 
+  watchFetchAllphabetsData, 
+  watchFetchSubCategoryData,
+  watchFetchAllCategoryData
+ } from './applicationSaga';
 // Redux Saga: Root Saga
 export function* rootSaga () {
   yield all([
-    fork(watchFetchAlphabetsData),
+    fork(watchFetchAllphabetsData),
+    fork(watchFetchSubCategoryData),
+    fork(watchFetchAllCategoryData)
   ]);
 };

@@ -1,10 +1,11 @@
 // Imports: Dependencies
 import { combineReducers } from 'redux';
 // Imports: Reducers
-import alphabetsReducer from './alphabetsReducer';
+import applicationReducer from './applicationReducer';
+
 // Redux: Root Reducer
 const rootReducer = combineReducers({
-  alphabets: alphabetsReducer,
+  application: applicationReducer
 });
 // Exports
 export default rootReducer;
